@@ -12,7 +12,7 @@ const Container = () => {
       <NavHeader />
 
       {/* Page Content */}
-      <Content style={{ padding: "20px" }}>
+      <Content style={{ padding: "50px" }}>
         <Outlet />
       </Content>
 
