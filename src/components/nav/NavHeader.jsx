@@ -8,6 +8,7 @@ import {
 import { Menu, Drawer, Button } from "antd";
 import { Link, useLocation } from "react-router-dom";
 import { useState, useEffect } from "react";
+import logo from "../../assets/logo.png";
 
 const NavHeader = () => {
   const location = useLocation();
@@ -30,6 +31,7 @@ const NavHeader = () => {
       selectedKeys={[location.pathname]}
       mode={isMobile ? "vertical" : "horizontal"}
       onClick={handleClose}
+      style={{ marginLeft: isMobile ? 0 : "auto" }}
     >
       <Menu.Item key="/" icon={<HomeTwoTone />}>
         <Link to="/">Home</Link>
@@ -47,7 +49,19 @@ const NavHeader = () => {
   );
 
   return (
-    <>
+    <div
+      style={{
+        display: "flex",
+        alignItems: "center",
+        padding: "10px",
+        background: "#fff",
+      }}
+    >
+      <img
+        src={logo}
+        alt="Logo"
+        style={{ height: "40px", marginRight: "auto" }}
+      />
       {isMobile ? (
         <>
           <Button
@@ -56,7 +70,7 @@ const NavHeader = () => {
             onClick={() => setVisible(true)}
           />
           <Drawer
-            title="Menu"
+            title={<img src={logo} alt="Logo" style={{ height: "40px" }} />}
             placement="left"
             closable={true}
             onClose={handleClose}
@@ -68,7 +82,7 @@ const NavHeader = () => {
       ) : (
         menuItems
       )}
-    </>
+    </div>
   );
 };
 
