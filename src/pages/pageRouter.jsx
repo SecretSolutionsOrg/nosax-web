@@ -8,6 +8,7 @@ import Home from "./Home";
 import Research from "./Research";
 import NotFound from "./NotFound";
 import Library from "./Library";
+import Profile from "./Profile";
 
 const pageRouter = createBrowserRouter(
   createRoutesFromElements(
@@ -15,6 +16,7 @@ const pageRouter = createBrowserRouter(
       <Route index element={<Home />} />
       <Route path="research" element={<Research />} />
       <Route path="library" element={<Library />} />
+      <Route path="profile" element={<Profile />} />
       <Route path="*" element={<NotFound />} />
     </Route>
   )

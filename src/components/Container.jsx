@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { Layout } from "antd";
 import { Outlet } from "react-router-dom";
 import NavHeader from "./nav/NavHeader";
@@ -6,13 +7,26 @@ import NavFooter from "./nav/NavFooter";
 const { Content } = Layout;
 
 const Container = () => {
+  const [padding, setPadding] = useState("50px");
+
+  useEffect(() => {
+    const handleResize = () => {
+      setPadding(window.innerWidth < 768 ? "20px" : "50px");
+    };
+
+    handleResize();
+    window.addEventListener("resize", handleResize);
+
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   return (
     <Layout style={{ minHeight: "100vh" }}>
       {/* Navigation Bar */}
       <NavHeader />
 
       {/* Page Content */}
-      <Content style={{ padding: "50px" }}>
+      <Content style={{ padding }}>
         <Outlet />
       </Content>
 

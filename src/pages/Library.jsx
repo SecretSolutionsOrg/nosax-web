@@ -6,7 +6,7 @@ const Library = () => {
 
   const columns = [
     {
-      title: "Name",
+      title: "Research",
       dataIndex: "name",
       key: "name",
       render: (text) => (
@@ -139,7 +139,11 @@ const Library = () => {
       }}
     >
       <Card title="Personal Library" style={{ width: "100%" }}>
-        <Table columns={columns} dataSource={data} />
+        <Table
+          columns={columns}
+          dataSource={data}
+          scroll={{ x: "max-content" }}
+        />
       </Card>
     </div>
   );
