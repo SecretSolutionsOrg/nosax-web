@@ -29,8 +29,8 @@ const Profile = () => {
       ),
     },
     {
-      title: "Researchers",
-      dataIndex: "researchers",
+      title: "Researcher",
+      dataIndex: "researcher",
       key: "researchers",
     },
     {
@@ -59,14 +59,14 @@ const Profile = () => {
     {
       key: "1",
       name: "Research #1",
-      researchers: "Janjan, Bryn, Igme",
+      researcher: "Janjan, Bryn, Igme",
       adviser: "Maam",
       tags: ["published"],
     },
     {
       key: "2",
       name: "Research #2",
-      researchers: "Ayong, Airven",
+      researcher: "Ayong, Airven",
       adviser: "Sir",
       tags: ["published"],
     },
