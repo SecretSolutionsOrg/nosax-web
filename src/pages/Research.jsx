@@ -1,15 +1,15 @@
 import { Card, Row, Col } from "antd";
 import PDFViewer from "../components/PDFViewer";
 
-const data = [
-  { key: "Research", value: "This is the first card." },
-  { key: "Researcher", value: "This is the second card." },
-  { key: "Adviser", value: "This is the third card." },
-  { key: "Grade and Section", value: "This is the fourth card." },
-  { key: "Category", value: "This is the fifth card." },
-];
-
 const Research = () => {
+  const data = [
+    { key: "Research", value: "This is the first card." },
+    { key: "Researcher", value: "This is the second card." },
+    { key: "Adviser", value: "This is the third card." },
+    { key: "Grade and Section", value: "This is the fourth card." },
+    { key: "Category", value: "This is the fifth card." },
+  ];
+
   return (
     <div
       style={{
