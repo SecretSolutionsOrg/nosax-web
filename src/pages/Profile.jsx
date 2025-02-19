@@ -39,12 +39,12 @@ const Profile = () => {
       key: "adviser",
     },
     {
-      title: "Tags",
-      key: "tags",
-      dataIndex: "tags",
-      render: (_, { tags }) => (
+      title: "Status",
+      key: "status",
+      dataIndex: "status",
+      render: (_, { status }) => (
         <>
-          {tags.map((tag) => {
+          {status.map((tag) => {
             return (
               <Tag color="green" key={tag}>
                 {tag.toUpperCase()}
@@ -61,14 +61,14 @@ const Profile = () => {
       name: "Research #1",
       researcher: "Janjan, Bryn, Igme",
       adviser: "Maam",
-      tags: ["published"],
+      status: ["published"],
     },
     {
       key: "2",
       name: "Research #2",
       researcher: "Ayong, Airven",
       adviser: "Sir",
-      tags: ["published"],
+      status: ["published"],
     },
   ];
 

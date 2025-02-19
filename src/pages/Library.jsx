@@ -26,12 +26,12 @@ const Library = () => {
       key: "adviser",
     },
     {
-      title: "Tags",
-      key: "tags",
-      dataIndex: "tags",
-      render: (_, { tags }) => (
+      title: "Status",
+      key: "status",
+      dataIndex: "status",
+      render: (_, { status }) => (
         <>
-          {tags.map((tag) => {
+          {status.map((tag) => {
             return (
               <Tag color="green" key={tag}>
                 {tag.toUpperCase()}
@@ -48,84 +48,84 @@ const Library = () => {
       name: "Research #1",
       researcher: "Janjan, Bryn, Igme",
       adviser: "Maam",
-      tags: ["saved"],
+      status: ["saved"],
     },
     {
       key: "2",
       name: "Research #2",
       researcher: "Ayong, Airven",
       adviser: "Sir",
-      tags: ["saved"],
+      status: ["saved"],
     },
     {
       key: "3",
       name: "Research #3",
       researcher: "Kobe, Mike",
       adviser: "Maam/Sir",
-      tags: ["saved"],
+      status: ["saved"],
     },
     {
       key: "4",
       name: "Research #4",
       researcher: "Janjan, Bryn, Igme",
       adviser: "Maam",
-      tags: ["saved"],
+      status: ["saved"],
     },
     {
       key: "5",
       name: "Research #5",
       researcher: "Ayong, Airven",
       adviser: "Sir",
-      tags: ["saved"],
+      status: ["saved"],
     },
     {
       key: "6",
       name: "Research #6",
       researcher: "Kobe, Mike",
       adviser: "Maam/Sir",
-      tags: ["saved"],
+      status: ["saved"],
     },
     {
       key: "7",
       name: "Research #7",
       researcher: "Janjan, Bryn, Igme",
       adviser: "Maam",
-      tags: ["saved"],
+      status: ["saved"],
     },
     {
       key: "8",
       name: "Research #8",
       researcher: "Ayong, Airven",
       adviser: "Sir",
-      tags: ["saved"],
+      status: ["saved"],
     },
     {
       key: "9",
       name: "Research #9",
       researcher: "Kobe, Mike",
       adviser: "Maam/Sir",
-      tags: ["saved"],
+      status: ["saved"],
     },
     {
       key: "10",
       name: "Research #10",
       researcher: "Janjan, Bryn, Igme",
       adviser: "Maam",
-      tags: ["saved"],
+      status: ["saved"],
     },
     {
       key: "11",
       name: "Research #11",
       researcher: "Ayong, Airven",
       adviser: "Sir",
-      tags: ["saved"],
+      status: ["saved"],
     },
     {
       key: "12",
       name: "Research #12",
       researcher: "Kobe, Mike",
       adviser: "Maam/Sir",
-      tags: ["saved"],
+      status: ["saved"],
     },
   ];
 
