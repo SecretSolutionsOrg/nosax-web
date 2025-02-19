@@ -31,13 +31,22 @@ const NavHeader = () => {
       selectedKeys={[location.pathname]}
       mode={isMobile ? "vertical" : "horizontal"}
       onClick={handleClose}
-      style={{ marginLeft: isMobile ? 0 : "auto" }}
+      style={
+        !isMobile
+          ? {
+              flex: 1,
+              justifyContent: "flex-end",
+              display: "inline-flex",
+              borderBottom: "none",
+            }
+          : {}
+      }
     >
       <Menu.Item key="/" icon={<HomeTwoTone />}>
         <Link to="/">Home</Link>
       </Menu.Item>
-      <Menu.Item key="/research" icon={<FileTextTwoTone />}>
-        <Link to="/research">Research</Link>
+      <Menu.Item key="/upload-research" icon={<FileTextTwoTone />}>
+        <Link to="/upload-research">Upload Research</Link>
       </Menu.Item>
       <Menu.Item key="/library" icon={<BookTwoTone />}>
         <Link to="/library">Library</Link>
@@ -52,25 +61,32 @@ const NavHeader = () => {
     <div
       style={{
         display: "flex",
+        justifyContent: "space-between",
         alignItems: "center",
         padding: "10px",
         background: "#fff",
       }}
     >
-      <img
-        src={logo}
-        alt="Logo"
-        style={{ height: "40px", marginRight: "auto" }}
-      />
+      <img src={logo} alt="Logo" style={{ height: "40px" }} />
       {isMobile ? (
-        <>
+        <div>
           <Button
             type="primary"
             icon={<MenuOutlined />}
             onClick={() => setVisible(true)}
           />
           <Drawer
-            title={<img src={logo} alt="Logo" style={{ height: "40px" }} />}
+            title={
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "center",
+                  width: "100%",
+                }}
+              >
+                <img src={logo} alt="Logo" style={{ height: "40px" }} />
+              </div>
+            }
             placement="left"
             closable={true}
             onClose={handleClose}
@@ -78,7 +94,7 @@ const NavHeader = () => {
           >
             {menuItems}
           </Drawer>
-        </>
+        </div>
       ) : (
         menuItems
       )}

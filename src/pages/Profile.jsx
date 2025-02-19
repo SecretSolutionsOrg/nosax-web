@@ -74,59 +74,41 @@ const Profile = () => {
 
   return (
     <>
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "start",
-          backgroundColor: "#f5f5f5",
-        }}
-      >
-        <Card title="Profile Student" style={{ width: "100%" }}>
-          <Row gutter={[16, 16]}>
-            {dataStudent.map((item) => (
-              <Col key={item.key} xs={24} sm={12}>
-                <Card title={item.key} size="small">
-                  <p>{item.value}</p>
-                </Card>
-              </Col>
-            ))}
-          </Row>
-          <Divider orientation="left">Published Papers</Divider>
-          <Table
-            columns={columns}
-            dataSource={data}
-            scroll={{ x: "max-content" }}
-          />
-        </Card>
-      </div>
+      <Card title="Profile Student" style={{ width: "100%" }}>
+        <Row gutter={[16, 16]}>
+          {dataStudent.map((item) => (
+            <Col key={item.key} xs={24} sm={12}>
+              <Card title={item.key} size="small">
+                <p>{item.value}</p>
+              </Card>
+            </Col>
+          ))}
+        </Row>
+        <Divider orientation="left">Published Papers</Divider>
+        <Table
+          columns={columns}
+          dataSource={data}
+          scroll={{ x: "max-content" }}
+        />
+      </Card>
       <br />
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "start",
-          backgroundColor: "#f5f5f5",
-        }}
-      >
-        <Card title="Profile Teacher" style={{ width: "100%" }}>
-          <Row gutter={[16, 16]}>
-            {dataTeacher.map((item) => (
-              <Col key={item.key} xs={24} sm={12}>
-                <Card title={item.key} size="small">
-                  <p>{item.value}</p>
-                </Card>
-              </Col>
-            ))}
-          </Row>
-          <Divider orientation="left">Published Papers</Divider>
-          <Table
-            columns={columns}
-            dataSource={data}
-            scroll={{ x: "max-content" }}
-          />
-        </Card>
-      </div>
+      <Card title="Profile Teacher" style={{ width: "100%" }}>
+        <Row gutter={[16, 16]}>
+          {dataTeacher.map((item) => (
+            <Col key={item.key} xs={24} sm={12}>
+              <Card title={item.key} size="small">
+                <p>{item.value}</p>
+              </Card>
+            </Col>
+          ))}
+        </Row>
+        <Divider orientation="left">Published Papers</Divider>
+        <Table
+          columns={columns}
+          dataSource={data}
+          scroll={{ x: "max-content" }}
+        />
+      </Card>
     </>
   );
 };

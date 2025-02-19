@@ -130,22 +130,13 @@ const Library = () => {
   ];
 
   return (
-    <div
-      style={{
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "start",
-        backgroundColor: "#f5f5f5",
-      }}
-    >
-      <Card title="Personal Library" style={{ width: "100%" }}>
-        <Table
-          columns={columns}
-          dataSource={data}
-          scroll={{ x: "max-content" }}
-        />
-      </Card>
-    </div>
+    <Card title="Personal Library" style={{ width: "100%" }}>
+      <Table
+        columns={columns}
+        dataSource={data}
+        scroll={{ x: "max-content" }}
+      />
+    </Card>
   );
 };
 
