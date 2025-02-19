@@ -1,10 +1,17 @@
-import { Button } from "antd";
+import { Card, Divider } from "antd";
+import SeniorHigh from "../components/home/SeniorHigh";
+import JuniorHigh from "../components/home/JuiorHigh";
 
 const Home = () => {
   return (
     <div>
-      <h1>Welcome to the Home Page</h1>
-      <Button type="primary">Get Started</Button>
+      <Card title="Senior High" style={{ width: "100%" }}>
+        <SeniorHigh />
+      </Card>
+      <Divider />
+      <Card title="Junior High" style={{ width: "100%" }}>
+        <JuniorHigh />
+      </Card>
     </div>
   );
 };
