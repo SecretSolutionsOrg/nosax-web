@@ -4,10 +4,10 @@ import logo from "../assets/logo.png";
 
 const { Title } = Typography;
 
-const Signin = () => {
+const Login = () => {
   const onFinish = (values) => {
     console.log("Received values: ", values);
-    // Add Firebase signin logic here
+    // Add Firebase login logic here
   };
 
   return (
@@ -21,7 +21,7 @@ const Signin = () => {
         />
       </Col>
 
-      {/* Right Column - Signin Form */}
+      {/* Right Column - login Form */}
       <Col xs={24} md={10}>
         <Card
           style={{ padding: "30px", boxShadow: "0 2px 10px rgba(0,0,0,0.1)" }}
@@ -29,7 +29,7 @@ const Signin = () => {
           <Title level={2} style={{ textAlign: "center" }}>
             Login
           </Title>
-          <Form name="signin" layout="vertical" onFinish={onFinish}>
+          <Form name="login" layout="vertical" onFinish={onFinish}>
             <Form.Item
               name="username"
               label="Username"
@@ -67,4 +67,4 @@ const Signin = () => {
   );
 };
 
-export default Signin;
+export default Login;

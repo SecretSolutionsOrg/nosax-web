@@ -11,7 +11,8 @@ import Library from "./Library";
 import Profile from "./Profile";
 import UploadResearch from "./UploadResearch";
 import Admin from "./admin/Admin";
-import Signin from "../auth/Signin";
+import Login from "../auth/Login";
+import Register from "../auth/Register";
 
 const pageRouter = createBrowserRouter(
   createRoutesFromElements(
@@ -29,7 +30,8 @@ const pageRouter = createBrowserRouter(
       <Route path="/admin" element={<Admin />} />
 
       {/* Auth Route */}
-      <Route path="/signup" element={<Signin />} />
+      <Route path="/login" element={<Login />} />
+      <Route path="/register" element={<Register />} />
     </>
   )
 );
