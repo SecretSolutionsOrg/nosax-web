@@ -35,7 +35,7 @@ const NavHeader = () => {
         !isMobile
           ? {
               flex: 1,
-              justifyContent: "flex-end",
+              justifyContent: "flex-start",
               display: "inline-flex",
               borderBottom: "none",
             }
@@ -98,6 +98,7 @@ const NavHeader = () => {
       ) : (
         menuItems
       )}
+      <img src={logo} alt="Logo" style={{ height: "40px" }} />
     </div>
   );
 };

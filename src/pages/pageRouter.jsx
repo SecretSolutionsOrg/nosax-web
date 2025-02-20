@@ -3,7 +3,7 @@ import {
   createBrowserRouter,
   createRoutesFromElements,
 } from "react-router-dom";
-import Container from "../components/Container";
+import MainLayout from "../components/MainLayout";
 import Home from "./Home";
 import Research from "./Research";
 import NotFound from "./NotFound";
@@ -13,11 +13,12 @@ import UploadResearch from "./UploadResearch";
 import Admin from "./admin/Admin";
 import Login from "../auth/Login";
 import Register from "../auth/Register";
+import AdminLayout from "../components/admin/AdminLayout";
 
 const pageRouter = createBrowserRouter(
   createRoutesFromElements(
     <>
-      <Route path="/" element={<Container />}>
+      <Route path="/" element={<MainLayout />}>
         <Route index element={<Home />} />
         <Route path="research" element={<Research />} />
         <Route path="upload-research" element={<UploadResearch />} />
@@ -27,7 +28,9 @@ const pageRouter = createBrowserRouter(
       </Route>
 
       {/* Admin Route */}
-      <Route path="/admin" element={<Admin />} />
+      <Route path="/admin" element={<AdminLayout />}>
+        <Route index element={<Admin />} />
+      </Route>
 
       {/* Auth Route */}
       <Route path="/login" element={<Login />} />
