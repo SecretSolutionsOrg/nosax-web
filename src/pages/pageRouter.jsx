@@ -10,6 +10,7 @@ import NotFound from "./NotFound";
 import Library from "./Library";
 import Profile from "./Profile";
 import UploadResearch from "./UploadResearch";
+import Admin from "./admin/Admin";
 
 const pageRouter = createBrowserRouter(
   createRoutesFromElements(
@@ -19,6 +20,7 @@ const pageRouter = createBrowserRouter(
       <Route path="upload-research" element={<UploadResearch />} />
       <Route path="library" element={<Library />} />
       <Route path="profile" element={<Profile />} />
+      <Route path="admin" element={<Admin />} />
       <Route path="*" element={<NotFound />} />
     </Route>
   )
