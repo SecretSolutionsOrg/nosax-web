@@ -11,18 +11,26 @@ import Library from "./Library";
 import Profile from "./Profile";
 import UploadResearch from "./UploadResearch";
 import Admin from "./admin/Admin";
+import Signin from "../auth/Signin";
 
 const pageRouter = createBrowserRouter(
   createRoutesFromElements(
-    <Route path="/" element={<Container />}>
-      <Route index element={<Home />} />
-      <Route path="research" element={<Research />} />
-      <Route path="upload-research" element={<UploadResearch />} />
-      <Route path="library" element={<Library />} />
-      <Route path="profile" element={<Profile />} />
-      <Route path="admin" element={<Admin />} />
-      <Route path="*" element={<NotFound />} />
-    </Route>
+    <>
+      <Route path="/" element={<Container />}>
+        <Route index element={<Home />} />
+        <Route path="research" element={<Research />} />
+        <Route path="upload-research" element={<UploadResearch />} />
+        <Route path="library" element={<Library />} />
+        <Route path="profile" element={<Profile />} />
+        <Route path="*" element={<NotFound />} />
+      </Route>
+
+      {/* Admin Route */}
+      <Route path="/admin" element={<Admin />} />
+
+      {/* Auth Route */}
+      <Route path="/signup" element={<Signin />} />
+    </>
   )
 );
 
