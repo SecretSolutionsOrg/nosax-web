@@ -30,32 +30,28 @@ const UploadResearch = () => {
   const [loading, setLoading] = useState(false);
   const [form] = Form.useForm();
   const [file, setFile] = useState(null);
-  const [strands, setStrands] = useState([]);
 
-  const levels = {
-    "Grade 7": ["STE"],
-    "Grade 8": ["STE"],
-    "Grade 9": ["STE"],
-    "Grade 10": ["STE", "GENERAL"],
-    "Grade 11": [
-      "STEM",
-      "ABM",
-      "Humms",
-      "GAS",
-      "Arts and Design",
-      "ICT",
-      "Sports Track",
-    ],
-    "Grade 12": [
-      "STEM",
-      "ABM",
-      "Humms",
-      "GAS",
-      "Arts and Design",
-      "ICT",
-      "Sports Track",
-    ],
-  };
+  const gradeSections = [
+    "Grade 7 - STE",
+    "Grade 8 - STE",
+    "Grade 9 - STE",
+    "Grade 10 - STE",
+    "Grade 10 - GENERAL",
+    "Grade 11 - STEM",
+    "Grade 11 - ABM",
+    "Grade 11 - Humms",
+    "Grade 11 - GAS",
+    "Grade 11 - Arts and Design",
+    "Grade 11 - ICT",
+    "Grade 11 - Sports Track",
+    "Grade 12 - STEM",
+    "Grade 12 - ABM",
+    "Grade 12 - Humms",
+    "Grade 12 - GAS",
+    "Grade 12 - Arts and Design",
+    "Grade 12 - ICT",
+    "Grade 12 - Sports Track",
+  ];
 
   const categories = [
     "Life Science",
@@ -65,16 +61,15 @@ const UploadResearch = () => {
     "Mathematical and Computational",
   ];
 
-  const handleLevelChange = (level) => {
-    setStrands(levels[level] || []);
-    form.setFieldsValue({ strand: undefined });
-  };
-
   const handleFileChange = ({ file }) => {
-    if (file.status === "done") {
-      setFile(file.originFileObj);
-      form.setFields([{ name: "pdf", errors: [] }]);
+    if (file.type !== "application/pdf") {
+      message.error("Only PDF files are allowed!");
+      form.setFields([{ name: "pdf", errors: ["Please upload a PDF file."] }]);
+      return;
     }
+
+    setFile(file); // Set the file directly
+    form.setFields([{ name: "pdf", errors: [] }]);
   };
 
   // const uploadPDF = async (file) => {
@@ -99,8 +94,7 @@ const UploadResearch = () => {
       //   title: values.title,
       //   researchers: values.researchers.map((a) => a.researcher).join(", "),
       //   adviser: values.adviser,
-      //   level: values.level,
-      //   strand: values.strand,
+      //   gradeSection: values.gradeSection,
       //   category: values.category,
       //   pdfURL,
       //   timestamp: new Date(),
@@ -110,7 +104,6 @@ const UploadResearch = () => {
       message.success("Research added successfully!");
       form.resetFields();
       setFile(null);
-      setStrands([]);
     } catch (error) {
       console.error("Error adding research:", error);
       message.error("Failed to add research.");
@@ -122,15 +115,35 @@ const UploadResearch = () => {
   return (
     <Card title="Upload Research" style={{ width: "100%" }}>
       <Form layout="vertical" form={form} onFinish={handleSubmit}>
-        <Form.Item
-          label="Title"
-          name="title"
-          rules={[{ required: true, message: "Please enter the title" }]}
-        >
-          <Input placeholder="Enter research title" />
-        </Form.Item>
-
         <Row gutter={16}>
+          <Col xs={24} sm={12}>
+            <Form.Item
+              label="Title"
+              name="title"
+              rules={[{ required: true, message: "Please enter the title" }]}
+            >
+              <Input placeholder="Enter research title" />
+            </Form.Item>
+          </Col>
+
+          <Col xs={24} sm={12}>
+            <Form.Item
+              label="Grade & Section"
+              name="gradeSection"
+              rules={[
+                { required: true, message: "Please select grade & section" },
+              ]}
+            >
+              <Select placeholder="Select grade & section">
+                {gradeSections.map((gs) => (
+                  <Option key={gs} value={gs}>
+                    {gs}
+                  </Option>
+                ))}
+              </Select>
+            </Form.Item>
+          </Col>
+
           <Col xs={24} sm={12}>
             <Form.Item
               label="Adviser"
@@ -156,39 +169,9 @@ const UploadResearch = () => {
               </Select>
             </Form.Item>
           </Col>
+        </Row>
 
-          <Col xs={24} sm={12}>
-            <Form.Item
-              label="Level"
-              name="level"
-              rules={[{ required: true, message: "Please select a level" }]}
-            >
-              <Select placeholder="Select a level" onChange={handleLevelChange}>
-                {Object.keys(levels).map((lvl) => (
-                  <Option key={lvl} value={lvl}>
-                    {lvl}
-                  </Option>
-                ))}
-              </Select>
-            </Form.Item>
-          </Col>
-
-          <Col xs={24} sm={12}>
-            <Form.Item
-              label="Strand"
-              name="strand"
-              rules={[{ required: true, message: "Please select a strand" }]}
-            >
-              <Select placeholder="Select a strand" disabled={!strands.length}>
-                {strands.map((str) => (
-                  <Option key={str} value={str}>
-                    {str}
-                  </Option>
-                ))}
-              </Select>
-            </Form.Item>
-          </Col>
-
+        <Row gutter={16}>
           <Col xs={24} sm={12}>
             <Divider orientation="center">Researchers</Divider>
             <div style={{ textAlign: "center" }}>
@@ -256,7 +239,13 @@ const UploadResearch = () => {
                 ]}
               >
                 <Upload
-                  beforeUpload={() => false}
+                  beforeUpload={(file) => {
+                    if (file.type !== "application/pdf") {
+                      message.error("You can only upload PDF files!");
+                      return Upload.LIST_IGNORE;
+                    }
+                    return false; // Prevent automatic upload
+                  }}
                   accept=".pdf"
                   maxCount={1}
                   onChange={handleFileChange}

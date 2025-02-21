@@ -7,13 +7,17 @@ const Profile = () => {
   const dataStudent = [
     { key: "Username", value: "This is the first card." },
     { key: "Name", value: "This is the second card." },
-    { key: "Grade and Section", value: "This is the fourth card." },
-    { key: "LRN", value: "This is the fifth card." },
+    { key: "Age", value: "This is the third card." },
+    { key: "Gender", value: "This is the fourth card." },
+    { key: "Grade and Section", value: "This is the fifth card." },
+    { key: "LRN", value: "This is the sixth card." },
   ];
 
   const dataTeacher = [
     { key: "Username", value: "This is the first card." },
     { key: "Name", value: "This is the second card." },
+    { key: "Age", value: "This is the third card." },
+    { key: "Gender", value: "This is the fourth card." },
     { key: "LRN", value: "This is the fifth card." },
   ];
 
