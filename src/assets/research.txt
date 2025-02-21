@@ -1,3 +1,3 @@
-Research Title 1|Researcher 1|Adviser 1
-Research Title 2|Researcher 2|Adviser 2
-Research Title 3|Researcher 3|Adviser 3
+Research Title 1|Researcher 1|Adviser 1|Grade 11 - Arts and Design|Software
+Research Title 2|Researcher 2|Adviser 2|Grade 11 - Arts and Design|Software
+Research Title 3|Researcher 3|Adviser 3|Grade 11 - Arts and Design|Software

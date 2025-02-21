@@ -1,17 +1,31 @@
 import { Card, Row, Col } from "antd";
+import { useLocation } from "react-router-dom";
 import PDFViewer from "../components/PDFViewer";
 
 const Research = () => {
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+
+  const title = queryParams.get("title") || "Unknown Title";
+
   const data = [
-    { key: "Research", value: "This is the first card." },
-    { key: "Researcher", value: "This is the second card." },
-    { key: "Adviser", value: "This is the third card." },
-    { key: "Grade and Section", value: "This is the fourth card." },
-    { key: "Category", value: "This is the fifth card." },
+    {
+      key: "Researcher",
+      value: queryParams.get("researcher") || "Unknown Researcher",
+    },
+    { key: "Adviser", value: queryParams.get("adviser") || "Unknown Adviser" },
+    {
+      key: "Grade and Section",
+      value: queryParams.get("gradeSection") || "Unknown Grade and Section",
+    },
+    {
+      key: "Category",
+      value: queryParams.get("category") || "Unknown Category",
+    },
   ];
 
   return (
-    <Card title="Research Title Here" style={{ width: "100%" }}>
+    <Card title={title} style={{ width: "100%" }}>
       <Row gutter={[16, 16]}>
         {data.map((item) => (
           <Col key={item.key} xs={24} sm={12}>

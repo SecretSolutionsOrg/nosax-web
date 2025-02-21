@@ -21,11 +21,14 @@ const SearchResult = () => {
         const response = await fetch("/src/assets/research.txt");
         const text = await response.text();
         const data = text.split("\n").map((line) => {
-          const [title, researcher, adviser] = line.split("|");
+          const [title, researcher, adviser, gradeSection, category] =
+            line.split("|");
           return {
             title: title.trim(),
             researcher: researcher?.trim(),
             adviser: adviser?.trim(),
+            gradeSection: gradeSection?.trim(),
+            category: category?.trim(),
           };
         });
 
@@ -88,9 +91,27 @@ const SearchResult = () => {
                 actions={[
                   <Link
                     key="list-loadmore-view"
-                    to={`/research/${encodeURIComponent(item.title)}`}
+                    to={`/research?title=${encodeURIComponent(
+                      item.title
+                    )}&researcher=${encodeURIComponent(
+                      item.researcher
+                    )}&adviser=${encodeURIComponent(
+                      item.adviser
+                    )}&gradeSection=${encodeURIComponent(
+                      item.gradeSection
+                    )}&category=${encodeURIComponent(item.category)}`}
                     onClick={() =>
-                      navigate(`/research/${encodeURIComponent(item.title)}`)
+                      navigate(
+                        `/research?title=${encodeURIComponent(
+                          item.title
+                        )}&researcher=${encodeURIComponent(
+                          item.researcher
+                        )}&adviser=${encodeURIComponent(
+                          item.adviser
+                        )}&gradeSection=${encodeURIComponent(
+                          item.gradeSection
+                        )}&category=${encodeURIComponent(item.category)}`
+                      )
                     }
                   >
                     View
