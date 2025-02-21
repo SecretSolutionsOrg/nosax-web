@@ -244,7 +244,7 @@ const UploadResearch = () => {
                       message.error("You can only upload PDF files!");
                       return Upload.LIST_IGNORE;
                     }
-                    return false; // Prevent automatic upload
+                    return false;
                   }}
                   accept=".pdf"
                   maxCount={1}

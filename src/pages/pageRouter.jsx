@@ -14,6 +14,7 @@ import Admin from "./admin/Admin";
 import Login from "../auth/Login";
 import Register from "../auth/Register";
 import AdminLayout from "../components/admin/AdminLayout";
+import SearchResult from "./SearchResult";
 
 const pageRouter = createBrowserRouter(
   createRoutesFromElements(
@@ -24,6 +25,7 @@ const pageRouter = createBrowserRouter(
         <Route path="upload-research" element={<UploadResearch />} />
         <Route path="library" element={<Library />} />
         <Route path="profile" element={<Profile />} />
+        <Route path="search" element={<SearchResult />} />
         <Route path="*" element={<NotFound />} />
       </Route>
 

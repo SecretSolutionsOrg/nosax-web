@@ -4,16 +4,19 @@ import {
   BookTwoTone,
   ProfileTwoTone,
   MenuOutlined,
+  SearchOutlined,
 } from "@ant-design/icons";
-import { Menu, Drawer, Button } from "antd";
-import { Link, useLocation } from "react-router-dom";
+import { Menu, Drawer, Button, Input } from "antd";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import logo from "../../assets/logo.png";
 
 const NavHeader = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const [visible, setVisible] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+  const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
     const handleResize = () => {
@@ -25,6 +28,12 @@ const NavHeader = () => {
   }, []);
 
   const handleClose = () => setVisible(false);
+
+  const handleSearch = (value) => {
+    if (value.trim()) {
+      navigate(`/search?query=${value}`);
+    }
+  };
 
   const menuItems = (
     <Menu
@@ -68,6 +77,16 @@ const NavHeader = () => {
       }}
     >
       <img src={logo} alt="Logo" style={{ height: "40px" }} />
+      {!isMobile && (
+        <Input
+          placeholder="Search..."
+          prefix={<SearchOutlined />}
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          onPressEnter={(e) => handleSearch(e.target.value)}
+          style={{ width: "250px", marginLeft: "10px" }}
+        />
+      )}
       {isMobile ? (
         <div>
           <Button
@@ -92,6 +111,14 @@ const NavHeader = () => {
             onClose={handleClose}
             open={visible}
           >
+            <Input
+              placeholder="Search..."
+              prefix={<SearchOutlined />}
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              onPressEnter={(e) => handleSearch(e.target.value)}
+              style={{ width: "100%", marginBottom: "10px" }}
+            />
             {menuItems}
           </Drawer>
         </div>
