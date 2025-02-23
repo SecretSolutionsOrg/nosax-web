@@ -1,8 +1,25 @@
 import { useState } from "react";
-import { Form, Input, Select, Button, Radio, Card, Row, Col } from "antd";
+import {
+  Form,
+  Input,
+  InputNumber,
+  Select,
+  Button,
+  Radio,
+  Card,
+  Row,
+  Col,
+  Typography,
+  notification,
+} from "antd";
 import logo from "../assets/logo.png";
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { registerUser } from "../store/user";
+import { auth } from "../store/firebase-config";
+import { Link, useNavigate } from "react-router-dom";
 
 const { Option } = Select;
+const { Text } = Typography;
 
 const gradeSections = [
   "Grade 7 - STE",
@@ -28,235 +45,297 @@ const gradeSections = [
 
 const Register = () => {
   const [role, setRole] = useState("student");
+  const [api, contextHolder] = notification.useNotification();
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
-  const onFinish = (values) => {
-    console.log("Form values:", values);
+  const openNotificationWithIcon = (type, message) => {
+    api[type]({
+      message: message,
+    });
+  };
+
+  const onFinish = async (values) => {
+    setLoading(true);
+
+    const { email, name, age, gender, grade_section, lrn, deped_id, password } =
+      values;
+
+    try {
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+      const user = userCredential.user;
+
+      const userData = {
+        uid: user.uid,
+        email,
+        name,
+        age: Number(age),
+        gender,
+        role,
+        isAdmin: false,
+        ...(role === "student" ? { grade_section, lrn } : { deped_id }),
+        createdAt: new Date(),
+      };
+
+      await registerUser(user.uid, userData);
+      // openNotificationWithIcon("success", "Successful new registration");
+      navigate("/");
+    } catch (error) {
+      console.error("Error registration:", error);
+      openNotificationWithIcon("error", "Unsuccessful new registration");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
-    <div
-      style={{
-        height: "100vh",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        padding: "20px",
-      }}
-    >
-      <Row
-        gutter={[16, 16]}
-        align="middle"
-        style={{ width: "100%", maxWidth: "1000px" }}
+    <>
+      {contextHolder}
+      <div
+        style={{
+          height: "100vh",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          padding: "20px",
+        }}
       >
-        {/* Logo */}
-        <Col
-          xs={24}
-          md={12}
-          style={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-          }}
+        <Row
+          gutter={[16, 16]}
+          align="middle"
+          style={{ width: "100%", maxWidth: "1000px" }}
         >
-          <img
-            src={logo}
-            alt="Logo"
+          {/* Logo */}
+          <Col
+            xs={24}
+            md={12}
             style={{
-              maxWidth: "100%",
-              height: "auto",
-              objectFit: "contain",
-              padding: "10px",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
             }}
-          />
-        </Col>
+          >
+            <img
+              src={logo}
+              alt="Logo"
+              style={{
+                maxWidth: "100%",
+                height: "auto",
+                objectFit: "contain",
+                padding: "10px",
+              }}
+            />
+          </Col>
 
-        {/* Form */}
-        <Col xs={24} md={12}>
-          <Card style={{ width: "100%" }}>
-            <Form layout="vertical" onFinish={onFinish}>
-              <Form.Item label="Register As" name="role" initialValue="student">
-                <Radio.Group onChange={(e) => setRole(e.target.value)}>
-                  <Radio value="student">Student</Radio>
-                  <Radio value="teacher">Teacher</Radio>
-                </Radio.Group>
-              </Form.Item>
+          {/* Form */}
+          <Col xs={24} md={12}>
+            <Card style={{ width: "100%" }}>
+              <Form layout="vertical" onFinish={onFinish}>
+                <Form.Item
+                  label="Register As"
+                  name="role"
+                  initialValue="student"
+                >
+                  <Radio.Group onChange={(e) => setRole(e.target.value)}>
+                    <Radio value="student">Student</Radio>
+                    <Radio value="teacher">Teacher</Radio>
+                  </Radio.Group>
+                </Form.Item>
 
-              {/* Two-column layout for wider screens */}
-              <Row gutter={16}>
-                <Col xs={24} md={12}>
-                  <Form.Item
-                    label="Username"
-                    name="username"
-                    rules={[
-                      {
-                        required: true,
-                        message: "Please enter your username!",
-                      },
-                    ]}
-                  >
-                    <Input />
-                  </Form.Item>
-                </Col>
-
-                <Col xs={24} md={12}>
-                  <Form.Item
-                    label="Fullname"
-                    name="name"
-                    rules={[
-                      {
-                        required: true,
-                        message: "Please enter your fullname!",
-                      },
-                    ]}
-                  >
-                    <Input />
-                  </Form.Item>
-                </Col>
-
-                <Col xs={24} md={12}>
-                  <Form.Item
-                    label="Age"
-                    name="age"
-                    rules={[
-                      {
-                        required: true,
-                        message: "Please enter your age!",
-                      },
-                      {
-                        type: "number",
-                        min: 1,
-                        message: "Age must be a positive number!",
-                      },
-                    ]}
-                  >
-                    <Input type="number" min={1} />
-                  </Form.Item>
-                </Col>
-
-                <Col xs={24} md={12}>
-                  <Form.Item
-                    label="Gender"
-                    name="gender"
-                    rules={[
-                      { required: true, message: "Please select your gender!" },
-                    ]}
-                  >
-                    <Select>
-                      <Option value="male">Male</Option>
-                      <Option value="female">Female</Option>
-                    </Select>
-                  </Form.Item>
-                </Col>
-
-                {role === "student" ? (
-                  <>
-                    <Col xs={24} md={12}>
-                      <Form.Item
-                        label="Grade & Section"
-                        name="grade_section"
-                        rules={[
-                          {
-                            required: true,
-                            message: "Please select your grade and section!",
-                          },
-                        ]}
-                      >
-                        <Select placeholder="Select Grade & Section">
-                          {gradeSections.map((grade) => (
-                            <Option key={grade} value={grade}>
-                              {grade}
-                            </Option>
-                          ))}
-                        </Select>
-                      </Form.Item>
-                    </Col>
-
-                    <Col xs={24} md={12}>
-                      <Form.Item
-                        label="LRN"
-                        name="lrn"
-                        rules={[
-                          {
-                            required: true,
-                            message: "Please enter your LRN!",
-                          },
-                        ]}
-                      >
-                        <Input />
-                      </Form.Item>
-                    </Col>
-                  </>
-                ) : (
-                  <Col xs={24}>
+                {/* Two-column layout for wider screens */}
+                <Row gutter={16}>
+                  <Col xs={24} md={12}>
                     <Form.Item
-                      label="DepEd ID"
-                      name="deped_id"
+                      label="Email"
+                      name="email"
                       rules={[
+                        { required: true, message: "Please enter your email!" },
                         {
-                          required: true,
-                          message: "Please enter your DepEd ID!",
+                          type: "email",
+                          message: "Please enter a valid email!",
                         },
                       ]}
                     >
                       <Input />
                     </Form.Item>
                   </Col>
-                )}
 
-                <Col xs={24} md={12}>
-                  <Form.Item
-                    label="Password"
-                    name="password"
-                    rules={[
-                      {
-                        required: true,
-                        message: "Please enter your password!",
-                      },
-                    ]}
-                  >
-                    <Input.Password />
-                  </Form.Item>
-                </Col>
-
-                <Col xs={24} md={12}>
-                  <Form.Item
-                    label="Confirm Password"
-                    name="confirm_password"
-                    dependencies={["password"]}
-                    rules={[
-                      {
-                        required: true,
-                        message: "Please confirm your password!",
-                      },
-                      ({ getFieldValue }) => ({
-                        validator(_, value) {
-                          if (!value || getFieldValue("password") === value) {
-                            return Promise.resolve();
-                          }
-                          return Promise.reject(
-                            new Error("Passwords do not match!")
-                          );
+                  <Col xs={24} md={12}>
+                    <Form.Item
+                      label="Fullname"
+                      name="name"
+                      rules={[
+                        {
+                          required: true,
+                          message: "Please enter your fullname!",
                         },
-                      }),
-                    ]}
-                  >
-                    <Input.Password />
-                  </Form.Item>
-                </Col>
-              </Row>
+                      ]}
+                    >
+                      <Input />
+                    </Form.Item>
+                  </Col>
 
-              <div style={{ marginTop: 40 }}>
-                <Form.Item>
-                  <Button type="primary" htmlType="submit" block>
-                    Register
-                  </Button>
-                </Form.Item>
-              </div>
-            </Form>
-          </Card>
-        </Col>
-      </Row>
-    </div>
+                  <Col xs={24} md={12}>
+                    <Form.Item
+                      label="Age"
+                      name="age"
+                      rules={[
+                        {
+                          required: true,
+                          message: "Please enter your age!",
+                        },
+                        {
+                          type: "number",
+                          min: 1,
+                          message: "Age must be a positive number!",
+                        },
+                      ]}
+                    >
+                      <InputNumber type="number" min={1} />
+                    </Form.Item>
+                  </Col>
+
+                  <Col xs={24} md={12}>
+                    <Form.Item
+                      label="Gender"
+                      name="gender"
+                      rules={[
+                        {
+                          required: true,
+                          message: "Please select your gender!",
+                        },
+                      ]}
+                    >
+                      <Select>
+                        <Option value="male">Male</Option>
+                        <Option value="female">Female</Option>
+                      </Select>
+                    </Form.Item>
+                  </Col>
+
+                  {role === "student" ? (
+                    <>
+                      <Col xs={24} md={12}>
+                        <Form.Item
+                          label="Grade & Section"
+                          name="grade_section"
+                          rules={[
+                            {
+                              required: true,
+                              message: "Please select your grade and section!",
+                            },
+                          ]}
+                        >
+                          <Select placeholder="Select Grade & Section">
+                            {gradeSections.map((grade) => (
+                              <Option key={grade} value={grade}>
+                                {grade}
+                              </Option>
+                            ))}
+                          </Select>
+                        </Form.Item>
+                      </Col>
+
+                      <Col xs={24} md={12}>
+                        <Form.Item
+                          label="LRN"
+                          name="lrn"
+                          rules={[
+                            {
+                              required: true,
+                              message: "Please enter your LRN!",
+                            },
+                          ]}
+                        >
+                          <Input />
+                        </Form.Item>
+                      </Col>
+                    </>
+                  ) : (
+                    <Col xs={24}>
+                      <Form.Item
+                        label="DepEd ID"
+                        name="deped_id"
+                        rules={[
+                          {
+                            required: true,
+                            message: "Please enter your DepEd ID!",
+                          },
+                        ]}
+                      >
+                        <Input />
+                      </Form.Item>
+                    </Col>
+                  )}
+
+                  <Col xs={24} md={12}>
+                    <Form.Item
+                      label="Password"
+                      name="password"
+                      rules={[
+                        {
+                          required: true,
+                          message: "Please enter your password!",
+                        },
+                      ]}
+                    >
+                      <Input.Password />
+                    </Form.Item>
+                  </Col>
+
+                  <Col xs={24} md={12}>
+                    <Form.Item
+                      label="Confirm Password"
+                      name="confirm_password"
+                      dependencies={["password"]}
+                      rules={[
+                        {
+                          required: true,
+                          message: "Please confirm your password!",
+                        },
+                        ({ getFieldValue }) => ({
+                          validator(_, value) {
+                            if (!value || getFieldValue("password") === value) {
+                              return Promise.resolve();
+                            }
+                            return Promise.reject(
+                              new Error("Passwords do not match!")
+                            );
+                          },
+                        }),
+                      ]}
+                    >
+                      <Input.Password />
+                    </Form.Item>
+                  </Col>
+                </Row>
+
+                <div style={{ marginTop: 40 }}>
+                  <Form.Item>
+                    <Button
+                      type="primary"
+                      htmlType="submit"
+                      block
+                      loading={loading}
+                    >
+                      Register
+                    </Button>
+                  </Form.Item>
+                </div>
+
+                <Text style={{ display: "block", textAlign: "center" }}>
+                  Already have an account? <Link to="/login">Login here</Link>
+                </Text>
+              </Form>
+            </Card>
+          </Col>
+        </Row>
+      </div>
+    </>
   );
 };
 

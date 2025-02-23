@@ -15,8 +15,7 @@ const researchCollection = collection(db, "researches");
 export const addResearch = async (research) => {
   try {
     const docRef = await addDoc(researchCollection, research);
-    console.log("Document written with ID: ", docRef.id);
-    return docRef.id;
+    console.log("Document written: ", docRef);
   } catch (error) {
     console.error("Error adding research:", error);
     throw error;

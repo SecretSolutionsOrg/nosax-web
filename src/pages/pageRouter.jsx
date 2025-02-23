@@ -15,11 +15,21 @@ import Login from "../auth/Login";
 import Register from "../auth/Register";
 import AdminLayout from "../components/admin/AdminLayout";
 import SearchResult from "./SearchResult";
+import ProtectedAuth from "../auth/middleware/protectedAuth";
+import ProtectedAdmin from "../auth/middleware/protectedAdmin";
+import ProtectedRoutes from "../auth/middleware/protectedRoutes";
 
 const pageRouter = createBrowserRouter(
   createRoutesFromElements(
     <>
-      <Route path="/" element={<MainLayout />}>
+      <Route
+        path="/"
+        element={
+          <ProtectedRoutes>
+            <MainLayout />
+          </ProtectedRoutes>
+        }
+      >
         <Route index element={<Home />} />
         <Route path="research" element={<Research />} />
         <Route path="upload-research" element={<UploadResearch />} />
@@ -30,13 +40,34 @@ const pageRouter = createBrowserRouter(
       </Route>
 
       {/* Admin Route */}
-      <Route path="/admin" element={<AdminLayout />}>
+      <Route
+        path="/admin"
+        element={
+          <ProtectedAdmin>
+            <AdminLayout />
+          </ProtectedAdmin>
+        }
+      >
         <Route index element={<Admin />} />
       </Route>
 
       {/* Auth Route */}
-      <Route path="/login" element={<Login />} />
-      <Route path="/register" element={<Register />} />
+      <Route
+        path="/login"
+        element={
+          <ProtectedAuth>
+            <Login />
+          </ProtectedAuth>
+        }
+      />
+      <Route
+        path="/register"
+        element={
+          <ProtectedAuth>
+            <Register />
+          </ProtectedAuth>
+        }
+      />
     </>
   )
 );

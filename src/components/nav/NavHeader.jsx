@@ -5,11 +5,14 @@ import {
   ProfileTwoTone,
   MenuOutlined,
   SearchOutlined,
+  LogoutOutlined,
 } from "@ant-design/icons";
 import { Menu, Drawer, Button, Input } from "antd";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import logo from "../../assets/logo.png";
+import { auth } from "../../store/firebase-config";
+import { signOut } from "firebase/auth";
 
 const NavHeader = () => {
   const location = useLocation();
@@ -32,6 +35,15 @@ const NavHeader = () => {
   const handleSearch = (value) => {
     if (value.trim()) {
       navigate(`/search?query=${value}`);
+    }
+  };
+
+  const handleLogout = async () => {
+    try {
+      await signOut(auth);
+      navigate("/login");
+    } catch (error) {
+      console.error("Logout failed", error);
     }
   };
 
@@ -62,6 +74,9 @@ const NavHeader = () => {
       </Menu.Item>
       <Menu.Item key="/profile" icon={<ProfileTwoTone />}>
         <Link to="/profile">Profile</Link>
+      </Menu.Item>
+      <Menu.Item key="/logout" icon={<LogoutOutlined />} onClick={handleLogout}>
+        Logout
       </Menu.Item>
     </Menu>
   );

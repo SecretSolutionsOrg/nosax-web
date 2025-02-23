@@ -28,9 +28,9 @@ const UploadResearch = () => {
   const [file, setFile] = useState(null);
   const [api, contextHolder] = notification.useNotification();
 
-  const openNotificationWithIcon = (type) => {
+  const openNotificationWithIcon = (type, message) => {
     api[type]({
-      message: "Successful Research Upload",
+      message: message,
     });
   };
 
@@ -95,13 +95,12 @@ const UploadResearch = () => {
 
       await addResearch(researchData);
 
-      message.success("Research added successfully!");
-      openNotificationWithIcon("success");
+      openNotificationWithIcon("success", "Successful research upload");
       form.resetFields();
       setFile(null);
     } catch (error) {
       console.error("Error adding research:", error);
-      message.error("Failed to add research.");
+      openNotificationWithIcon("error", "Unsuccessful research upload");
     } finally {
       setLoading(false);
     }
