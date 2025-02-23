@@ -11,25 +11,28 @@ import {
   Divider,
   Row,
   Col,
+  notification,
 } from "antd";
 import {
   UploadOutlined,
   PlusOutlined,
   MinusCircleOutlined,
 } from "@ant-design/icons";
-// import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
-// import { getFirestore, collection, addDoc } from "firebase/firestore";
-// import { app } from "../firebaseConfig"; // Ensure Firebase is initialized
+import { addResearch } from "../store/research";
 
 const { Option } = Select;
-
-// const storage = getStorage(app);
-// const db = getFirestore(app);
 
 const UploadResearch = () => {
   const [loading, setLoading] = useState(false);
   const [form] = Form.useForm();
   const [file, setFile] = useState(null);
+  const [api, contextHolder] = notification.useNotification();
+
+  const openNotificationWithIcon = (type) => {
+    api[type]({
+      message: "Successful Research Upload",
+    });
+  };
 
   const gradeSections = [
     "Grade 7 - STE",
@@ -68,19 +71,11 @@ const UploadResearch = () => {
       return;
     }
 
-    setFile(file); // Set the file directly
+    setFile(file);
     form.setFields([{ name: "pdf", errors: [] }]);
   };
 
-  // const uploadPDF = async (file) => {
-  //   const storageRef = ref(storage, `research_papers/${file.name}`);
-  //   await uploadBytes(storageRef, file);
-  //   return getDownloadURL(storageRef);
-  // };
-
   const handleSubmit = async (values) => {
-    console.log(values);
-
     if (!file) {
       form.setFields([{ name: "pdf", errors: ["Please upload a PDF file."] }]);
       return;
@@ -89,19 +84,19 @@ const UploadResearch = () => {
     setLoading(true);
 
     try {
-      // const pdfURL = await uploadPDF(file);
-      // const researchData = {
-      //   title: values.title,
-      //   researchers: values.researchers.map((a) => a.researcher).join(", "),
-      //   adviser: values.adviser,
-      //   gradeSection: values.gradeSection,
-      //   category: values.category,
-      //   pdfURL,
-      //   timestamp: new Date(),
-      // };
+      const researchData = {
+        title: values.title,
+        researchers: values.researchers.map((a) => a.researcher).join(", "),
+        adviser: values.adviser,
+        gradeSection: values.gradeSection,
+        category: values.category,
+        file: file.name,
+      };
 
-      // await addDoc(collection(db, "research"), researchData);
+      await addResearch(researchData);
+
       message.success("Research added successfully!");
+      openNotificationWithIcon("success");
       form.resetFields();
       setFile(null);
     } catch (error) {
@@ -113,162 +108,169 @@ const UploadResearch = () => {
   };
 
   return (
-    <Card title="Upload Research" style={{ width: "100%" }}>
-      <Form layout="vertical" form={form} onFinish={handleSubmit}>
-        <Row gutter={16}>
-          <Col xs={24} sm={12}>
-            <Form.Item
-              label="Title"
-              name="title"
-              rules={[{ required: true, message: "Please enter the title" }]}
-            >
-              <Input placeholder="Enter research title" />
-            </Form.Item>
-          </Col>
-
-          <Col xs={24} sm={12}>
-            <Form.Item
-              label="Grade & Section"
-              name="gradeSection"
-              rules={[
-                { required: true, message: "Please select grade & section" },
-              ]}
-            >
-              <Select placeholder="Select grade & section">
-                {gradeSections.map((gs) => (
-                  <Option key={gs} value={gs}>
-                    {gs}
-                  </Option>
-                ))}
-              </Select>
-            </Form.Item>
-          </Col>
-
-          <Col xs={24} sm={12}>
-            <Form.Item
-              label="Adviser"
-              name="adviser"
-              rules={[{ required: true, message: "Please enter adviser name" }]}
-            >
-              <Input placeholder="Enter adviser name" />
-            </Form.Item>
-          </Col>
-
-          <Col xs={24} sm={12}>
-            <Form.Item
-              label="Category"
-              name="category"
-              rules={[{ required: true, message: "Please select a category" }]}
-            >
-              <Select placeholder="Select a category">
-                {categories.map((cat) => (
-                  <Option key={cat} value={cat}>
-                    {cat}
-                  </Option>
-                ))}
-              </Select>
-            </Form.Item>
-          </Col>
-        </Row>
-
-        <Row gutter={16}>
-          <Col xs={24} sm={12}>
-            <Divider orientation="center">Researchers</Divider>
-            <div style={{ textAlign: "center" }}>
-              <Form.List name="researchers" initialValue={[{}]}>
-                {(fields, { add, remove }) => (
-                  <div style={{ marginBottom: 16 }}>
-                    {fields.map(({ key, name, ...restField }) => (
-                      <Space
-                        key={key}
-                        style={{
-                          display: "flex",
-                          marginBottom: 8,
-                          justifyContent: "center",
-                        }}
-                        align="baseline"
-                      >
-                        <Form.Item
-                          {...restField}
-                          name={[name, "researcher"]}
-                          rules={[
-                            {
-                              required: true,
-                              message: "Please enter researcher name",
-                            },
-                          ]}
-                          style={{ width: "100%" }}
-                        >
-                          <Input
-                            placeholder="Enter researcher name"
-                            style={{ textAlign: "center" }}
-                          />
-                        </Form.Item>
-                        {fields.length > 1 && (
-                          <MinusCircleOutlined
-                            onClick={() => remove(name)}
-                            style={{
-                              color: "red",
-                              fontSize: "16px",
-                              cursor: "pointer",
-                            }}
-                          />
-                        )}
-                      </Space>
-                    ))}
-                    <Button
-                      type="dashed"
-                      onClick={() => add()}
-                      icon={<PlusOutlined />}
-                    >
-                      Add Researcher
-                    </Button>
-                  </div>
-                )}
-              </Form.List>
-            </div>
-          </Col>
-
-          <Col xs={24} sm={12}>
-            <Divider orientation="center">Upload PDF</Divider>
-            <div style={{ textAlign: "center" }}>
+    <>
+      {contextHolder}
+      <Card title="Upload Research" style={{ width: "100%" }}>
+        <Form layout="vertical" form={form} onFinish={handleSubmit}>
+          <Row gutter={16}>
+            <Col xs={24} sm={12}>
               <Form.Item
-                name="pdf"
+                label="Title"
+                name="title"
+                rules={[{ required: true, message: "Please enter the title" }]}
+              >
+                <Input placeholder="Enter research title" />
+              </Form.Item>
+            </Col>
+
+            <Col xs={24} sm={12}>
+              <Form.Item
+                label="Grade & Section"
+                name="gradeSection"
                 rules={[
-                  { required: true, message: "Please upload a pdf file" },
+                  { required: true, message: "Please select grade & section" },
                 ]}
               >
-                <Upload
-                  beforeUpload={(file) => {
-                    if (file.type !== "application/pdf") {
-                      message.error("You can only upload PDF files!");
-                      return Upload.LIST_IGNORE;
-                    }
-                    return false;
-                  }}
-                  accept=".pdf"
-                  maxCount={1}
-                  onChange={handleFileChange}
-                >
-                  <Button type="dashed" icon={<UploadOutlined />}>
-                    Click to Upload
-                  </Button>
-                </Upload>
+                <Select placeholder="Select grade & section">
+                  {gradeSections.map((gs) => (
+                    <Option key={gs} value={gs}>
+                      {gs}
+                    </Option>
+                  ))}
+                </Select>
               </Form.Item>
-            </div>
-          </Col>
-        </Row>
+            </Col>
 
-        <Divider />
-        <div style={{ textAlign: "center" }}>
-          <Form.Item>
-            <Button type="primary" htmlType="submit" loading={loading}>
-              Submit
-            </Button>
-          </Form.Item>
-        </div>
-      </Form>
-    </Card>
+            <Col xs={24} sm={12}>
+              <Form.Item
+                label="Adviser"
+                name="adviser"
+                rules={[
+                  { required: true, message: "Please enter adviser name" },
+                ]}
+              >
+                <Input placeholder="Enter adviser name" />
+              </Form.Item>
+            </Col>
+
+            <Col xs={24} sm={12}>
+              <Form.Item
+                label="Category"
+                name="category"
+                rules={[
+                  { required: true, message: "Please select a category" },
+                ]}
+              >
+                <Select placeholder="Select a category">
+                  {categories.map((cat) => (
+                    <Option key={cat} value={cat}>
+                      {cat}
+                    </Option>
+                  ))}
+                </Select>
+              </Form.Item>
+            </Col>
+          </Row>
+
+          <Row gutter={16}>
+            <Col xs={24} sm={12}>
+              <Divider orientation="center">Researchers</Divider>
+              <div style={{ textAlign: "center" }}>
+                <Form.List name="researchers" initialValue={[{}]}>
+                  {(fields, { add, remove }) => (
+                    <div style={{ marginBottom: 16 }}>
+                      {fields.map(({ key, name, ...restField }) => (
+                        <Space
+                          key={key}
+                          style={{
+                            display: "flex",
+                            marginBottom: 8,
+                            justifyContent: "center",
+                          }}
+                          align="baseline"
+                        >
+                          <Form.Item
+                            {...restField}
+                            name={[name, "researcher"]}
+                            rules={[
+                              {
+                                required: true,
+                                message: "Please enter researcher name",
+                              },
+                            ]}
+                            style={{ width: "100%" }}
+                          >
+                            <Input
+                              placeholder="Enter researcher name"
+                              style={{ textAlign: "center" }}
+                            />
+                          </Form.Item>
+                          {fields.length > 1 && (
+                            <MinusCircleOutlined
+                              onClick={() => remove(name)}
+                              style={{
+                                color: "red",
+                                fontSize: "16px",
+                                cursor: "pointer",
+                              }}
+                            />
+                          )}
+                        </Space>
+                      ))}
+                      <Button
+                        type="dashed"
+                        onClick={() => add()}
+                        icon={<PlusOutlined />}
+                      >
+                        Add Researcher
+                      </Button>
+                    </div>
+                  )}
+                </Form.List>
+              </div>
+            </Col>
+
+            <Col xs={24} sm={12}>
+              <Divider orientation="center">Upload PDF</Divider>
+              <div style={{ textAlign: "center" }}>
+                <Form.Item
+                  name="pdf"
+                  rules={[
+                    { required: true, message: "Please upload a pdf file" },
+                  ]}
+                >
+                  <Upload
+                    beforeUpload={(file) => {
+                      if (file.type !== "application/pdf") {
+                        message.error("You can only upload PDF files!");
+                        return Upload.LIST_IGNORE;
+                      }
+                      return false;
+                    }}
+                    accept=".pdf"
+                    maxCount={1}
+                    onChange={handleFileChange}
+                  >
+                    <Button type="dashed" icon={<UploadOutlined />}>
+                      Click to Upload
+                    </Button>
+                  </Upload>
+                </Form.Item>
+              </div>
+            </Col>
+          </Row>
+
+          <Divider />
+          <div style={{ textAlign: "center" }}>
+            <Form.Item>
+              <Button type="primary" htmlType="submit" loading={loading}>
+                Submit
+              </Button>
+            </Form.Item>
+          </div>
+        </Form>
+      </Card>
+    </>
   );
 };
 
