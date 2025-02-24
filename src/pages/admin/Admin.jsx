@@ -1,169 +1,140 @@
-import { useState } from "react";
-import { Card, Button, List, Typography, Select, Row, Col } from "antd";
-
-const { Option } = Select;
+import { useState, useEffect } from "react";
+import { Card, Button, List, Typography, Row, Col, notification } from "antd";
+import { db } from "../../store/firebase-config";
+import {
+  collection,
+  query,
+  where,
+  getDocs,
+  updateDoc,
+  doc,
+} from "firebase/firestore";
 
 const Admin = () => {
-  const isSuperAdmin = true;
-  const [admins, setAdmins] = useState([
-    "admin1@example.com",
-    "admin2@example.com",
-  ]);
-  const [newAdmin, setNewAdmin] = useState("");
-  const [researchRequests, setResearchRequests] = useState([
-    {
-      id: 1,
-      title: "AI in Healthcare",
-      researcher: "John Doe",
-      adviser: "Dr. Smith",
-      pdfLink: "/pdf/trial.pdf",
-    },
-    {
-      id: 2,
-      title: "Blockchain Security",
-      researcher: "Jane Roe",
-      adviser: "Dr. Johnson",
-      pdfLink: "/pdf/trial.pdf",
-    },
-  ]);
+  const [researchRequests, setResearchRequests] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [api, contextHolder] = notification.useNotification();
 
-  const addAdmin = () => {
-    if (newAdmin) {
-      setAdmins([...admins, newAdmin]);
-      setNewAdmin("");
+  const openNotificationWithIcon = (type, message) => {
+    api[type]({
+      message: message,
+    });
+  };
+
+  useEffect(() => {
+    const fetchUnpublishedResearch = async () => {
+      setLoading(true);
+      try {
+        const researchRef = collection(db, "researches");
+        const q = query(researchRef, where("status", "==", "unpublished"));
+        const snapshot = await getDocs(q);
+
+        const researchData = snapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+
+        setResearchRequests(researchData);
+      } catch (error) {
+        console.error("Error fetching research requests:", error);
+      }
+      setLoading(false);
+    };
+
+    fetchUnpublishedResearch();
+  }, []);
+
+  const handleRequest = async (id, action) => {
+    const newStatus = action === "Accepted" ? "published" : "rejected";
+
+    try {
+      const researchDoc = doc(db, "researches", id);
+      await updateDoc(researchDoc, { status: newStatus });
+
+      setResearchRequests(researchRequests.filter((req) => req.id !== id));
+      openNotificationWithIcon(
+        "success",
+        `Research ${action.toLowerCase()} successfully!`
+      );
+    } catch (error) {
+      console.error(`Error updating research:`, error);
+      openNotificationWithIcon("error", "Unsuccessful action");
     }
   };
 
-  const removeAdmin = (admin) => {
-    setAdmins(admins.filter((a) => a !== admin));
-  };
-
-  const handleRequest = (id, action) => {
-    setResearchRequests(researchRequests.filter((req) => req.id !== id));
-    console.log(`${action} request with ID: ${id}`);
-  };
-
   return (
-    <Row gutter={[16, 16]} justify="center" style={{ padding: 16 }}>
-      {isSuperAdmin && (
-        <Col xs={24} sm={24} md={12} lg={12}>
-          {/* Admin Management Card */}
-          <Card title="Manage Admins" style={{ width: "100%" }}>
-            <Select
-              style={{ width: "100%", marginBottom: 10 }}
-              placeholder="Select or enter an admin email"
-              value={newAdmin}
-              onChange={setNewAdmin}
-              showSearch
-            >
-              {admins.map((admin, index) => (
-                <Option key={index} value={admin}>
-                  {admin}
-                </Option>
-              ))}
-            </Select>
-            <Button
-              type="primary"
-              onClick={addAdmin}
-              style={{ width: "100%", marginBottom: 10 }}
-            >
-              Add Admin
-            </Button>
+    <>
+      {contextHolder}
+      <Row gutter={[16, 16]} justify="center" style={{ padding: 16 }}>
+        <Col xs={24} sm={24} md={24} lg={24}>
+          <Card
+            title="Research Requests"
+            style={{ width: "100%" }}
+            loading={loading}
+          >
             <List
-              dataSource={admins}
-              renderItem={(admin, index) => (
+              dataSource={researchRequests}
+              renderItem={(item) => (
                 <List.Item
-                  key={index}
-                  style={{ justifyContent: "center" }}
-                  actions={[
-                    <Button
-                      key={`remove-${index}`}
-                      onClick={() => removeAdmin(admin)}
-                    >
-                      Remove
-                    </Button>,
-                  ]}
+                  key={item.id}
+                  style={{
+                    flexDirection: "column",
+                    alignItems: "flex-start",
+                    gap: "10px",
+                    display: "flex",
+                  }}
                 >
-                  {admin}
+                  <div style={{ flex: 1 }}>
+                    <Typography.Text strong>{item.title}</Typography.Text>
+                    <br />
+                    <Typography.Text type="secondary">
+                      Researcher: {item.researchers}
+                    </Typography.Text>
+                    <br />
+                    <Typography.Text type="secondary">
+                      Adviser: {item.adviser}
+                    </Typography.Text>
+                    <br />
+                    <a
+                      href="/pdf/default.pdf"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      View PDF
+                    </a>
+                  </div>
+                  <div
+                    style={{
+                      display: "flex",
+                      gap: "10px",
+                      flexWrap: "wrap",
+                      justifyContent:
+                        window.innerWidth > 768 ? "flex-end" : "flex-start",
+                      width: "100%",
+                    }}
+                  >
+                    <Button
+                      key={`accept-${item.id}`}
+                      type="primary"
+                      onClick={() => handleRequest(item.id, "Accepted")}
+                    >
+                      Accept
+                    </Button>
+                    <Button
+                      key={`reject-${item.id}`}
+                      danger
+                      onClick={() => handleRequest(item.id, "Rejected")}
+                    >
+                      Reject
+                    </Button>
+                  </div>
                 </List.Item>
               )}
             />
           </Card>
         </Col>
-      )}
-      <Col
-        xs={24}
-        sm={24}
-        md={isSuperAdmin ? 12 : 24}
-        lg={isSuperAdmin ? 12 : 24}
-      >
-        {/* Research Requests Card */}
-        <Card title="Research Requests" style={{ width: "100%" }}>
-          <List
-            dataSource={researchRequests}
-            renderItem={(item) => (
-              <List.Item
-                key={item.id}
-                style={{
-                  flexDirection: "column",
-                  alignItems: "flex-start",
-                  gap: "10px",
-                  display: "flex",
-                }}
-              >
-                <div style={{ flex: 1 }}>
-                  <Typography.Text strong>{item.title}</Typography.Text>
-                  <br />
-                  <Typography.Text type="secondary">
-                    Researcher: {item.researcher}
-                  </Typography.Text>
-                  <br />
-                  <Typography.Text type="secondary">
-                    Adviser: {item.adviser}
-                  </Typography.Text>
-                  <br />
-                  <a
-                    href={item.pdfLink}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    View PDF
-                  </a>
-                </div>
-                <div
-                  style={{
-                    display: "flex",
-                    gap: "10px",
-                    flexWrap: "wrap",
-                    justifyContent: isSuperAdmin
-                      ? "flex-start"
-                      : window.innerWidth > 768
-                      ? "flex-end"
-                      : "flex-start",
-                    width: "100%",
-                  }}
-                >
-                  <Button
-                    key={`accept-${item.id}`}
-                    type="primary"
-                    onClick={() => handleRequest(item.id, "Accepted")}
-                  >
-                    Accept
-                  </Button>
-                  <Button
-                    key={`reject-${item.id}`}
-                    danger
-                    onClick={() => handleRequest(item.id, "Rejected")}
-                  >
-                    Reject
-                  </Button>
-                </div>
-              </List.Item>
-            )}
-          />
-        </Card>
-      </Col>
-    </Row>
+      </Row>
+    </>
   );
 };
 
