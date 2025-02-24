@@ -19,6 +19,7 @@ import {
   MinusCircleOutlined,
 } from "@ant-design/icons";
 import { addResearch } from "../store/research";
+import { auth } from "../store/firebase-config";
 
 const { Option } = Select;
 
@@ -88,9 +89,12 @@ const UploadResearch = () => {
         title: values.title,
         researchers: values.researchers.map((a) => a.researcher).join(", "),
         adviser: values.adviser,
-        gradeSection: values.gradeSection,
+        grade_section: values.gradeSection,
         category: values.category,
         file: file.name,
+        uploader: auth.currentUser.uid,
+        createdAt: new Date(),
+        updatedAt: new Date(),
       };
 
       await addResearch(researchData);
@@ -99,7 +103,7 @@ const UploadResearch = () => {
       form.resetFields();
       setFile(null);
     } catch (error) {
-      console.error("Error adding research:", error);
+      console.error("Error create research:", error);
       openNotificationWithIcon("error", "Unsuccessful research upload");
     } finally {
       setLoading(false);

@@ -35,6 +35,7 @@ const NavHeader = () => {
   const handleSearch = (value) => {
     if (value.trim()) {
       navigate(`/search?query=${value}`);
+      setSearchQuery("");
     }
   };
 
@@ -43,7 +44,7 @@ const NavHeader = () => {
       await signOut(auth);
       navigate("/login");
     } catch (error) {
-      console.error("Logout failed", error);
+      console.error("Logout failed:", error);
     }
   };
 

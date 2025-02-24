@@ -1,86 +1,56 @@
 import { useEffect, useState } from "react";
-import { Avatar, Button, List, Skeleton } from "antd";
+import { Avatar, List, Skeleton } from "antd";
 import { FilePdfTwoTone } from "@ant-design/icons";
-import { Link, useNavigate } from "react-router-dom";
-
-const count = 5;
-const fakeDataUrl = `https://randomuser.me/api/?results=${count}&inc=name,gender,email,nat,picture&noinfo`;
+import { Link } from "react-router-dom";
+import { db } from "../../store/firebase-config";
+import { collection, query, where, getDocs } from "firebase/firestore";
 
 const JuniorHigh = () => {
-  const navigate = useNavigate();
-  const [initLoading, setInitLoading] = useState(true);
-  const [loading, setLoading] = useState(false);
-  const [data, setData] = useState([]);
-  const [list, setList] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [researches, setResearches] = useState([]);
 
   useEffect(() => {
-    fetch(fakeDataUrl)
-      .then((res) => res.json())
-      .then((res) => {
-        setInitLoading(false);
-        setData(res.results);
-        setList(res.results);
-      });
+    const fetchResearches = async () => {
+      const researchRef = collection(db, "researches");
+      const q = query(
+        researchRef,
+        where("grade_section", "in", [
+          "Grade 7 - STE",
+          "Grade 8 - STE",
+          "Grade 9 - STE",
+          "Grade 10 - STE",
+          "Grade 10 - GENERAL",
+        ])
+      );
+      const querySnapshot = await getDocs(q);
+
+      const researchList = querySnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+
+      setResearches(researchList);
+      setLoading(false);
+    };
+
+    fetchResearches();
   }, []);
-
-  const onLoadMore = () => {
-    setLoading(true);
-    setList(
-      data.concat(
-        Array.from({
-          length: count,
-        }).map(() => ({
-          loading: true,
-          name: {},
-          picture: {},
-        }))
-      )
-    );
-    fetch(fakeDataUrl)
-      .then((res) => res.json())
-      .then((res) => {
-        const newData = data.concat(res.results);
-        setData(newData);
-        setList(newData);
-        setLoading(false);
-        window.dispatchEvent(new Event("resize"));
-      });
-  };
-
-  const loadMore =
-    !initLoading && !loading ? (
-      <div
-        style={{
-          textAlign: "center",
-          marginTop: 12,
-          height: 32,
-          lineHeight: "32px",
-        }}
-      >
-        <Button onClick={onLoadMore}>loading more</Button>
-      </div>
-    ) : null;
 
   return (
     <List
       className="demo-loadmore-list"
-      loading={initLoading}
+      loading={loading}
       itemLayout="horizontal"
-      loadMore={loadMore}
-      dataSource={list}
+      dataSource={researches}
       renderItem={(item) => (
         <List.Item
           actions={[
-            <Link
-              key="list-loadmore-view"
-              to="/research"
-              onClick={() => navigate("/research")}
-            >
+            <Link key="list-loadmore-view" to={`/research?id=${item.id}`}>
               View
             </Link>,
           ]}
         >
-          <Skeleton avatar title={false} loading={item.loading} active>
+          <Skeleton avatar title={false} loading={loading} active>
             <List.Item.Meta
               avatar={
                 <Avatar
@@ -88,8 +58,8 @@ const JuniorHigh = () => {
                   icon={<FilePdfTwoTone />}
                 />
               }
-              title={item.name?.last}
-              description="Janjan Hapa, Bryn, Igme"
+              title={item.title}
+              description={item.researchers || "Unknown Researchers"}
             />
           </Skeleton>
         </List.Item>

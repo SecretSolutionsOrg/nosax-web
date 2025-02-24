@@ -79,13 +79,13 @@ const Register = () => {
         isAdmin: false,
         ...(role === "student" ? { grade_section, lrn } : { deped_id }),
         createdAt: new Date(),
+        updatedAt: new Date(),
       };
 
       await registerUser(user.uid, userData);
-      // openNotificationWithIcon("success", "Successful new registration");
       navigate("/");
     } catch (error) {
-      console.error("Error registration:", error);
+      console.error("Error register user:", error);
       openNotificationWithIcon("error", "Unsuccessful new registration");
     } finally {
       setLoading(false);

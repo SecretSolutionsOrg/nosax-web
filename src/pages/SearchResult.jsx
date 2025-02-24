@@ -2,75 +2,45 @@ import { useEffect, useState } from "react";
 import { useLocation, Link, useNavigate } from "react-router-dom";
 import { List, Skeleton, Avatar, Spin, Card } from "antd";
 import { FilePdfTwoTone } from "@ant-design/icons";
-// import { firestore } from "../firebaseConfig";
-// import { collection, query, where, getDocs } from "firebase/firestore";
+import { db } from "../store/firebase-config";
+import { collection, getDocs } from "firebase/firestore"; // Removed unused `query`
 
 const SearchResult = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const queryParams = new URLSearchParams(location.search);
   const searchQuery = queryParams.get("query") || "";
+
   const [researchList, setResearchList] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // for txt
   useEffect(() => {
     const fetchResearch = async () => {
       setLoading(true);
       try {
-        const response = await fetch("/src/assets/research.txt");
-        const text = await response.text();
-        const data = text.split("\n").map((line) => {
-          const [title, researcher, adviser, gradeSection, category] =
-            line.split("|");
-          return {
-            title: title.trim(),
-            researcher: researcher?.trim(),
-            adviser: adviser?.trim(),
-            gradeSection: gradeSection?.trim(),
-            category: category?.trim(),
-          };
-        });
+        const researchRef = collection(db, "researches");
+        const snapshot = await getDocs(researchRef);
 
-        const filteredData = data.filter((item) =>
+        const researchData = snapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+
+        const filteredResults = researchData.filter((item) =>
           item.title.toLowerCase().includes(searchQuery.toLowerCase())
         );
-        setResearchList(filteredData);
+
+        setResearchList(filteredResults);
       } catch (error) {
         console.error("Error fetching research:", error);
       }
       setLoading(false);
     };
+
     if (searchQuery) {
       fetchResearch();
     }
   }, [searchQuery]);
-
-  // // For firebase
-  // useEffect(() => {
-  //   const fetchResearch = async () => {
-  //     setLoading(true);
-  //     try {
-  //       const q = query(
-  //         collection(firestore, "research"),
-  //         where("title", ">=", searchQuery),
-  //         where("title", "<=", searchQuery + "\uf8ff")
-  //       );
-  //       const querySnapshot = await getDocs(q);
-  //       const results = querySnapshot.docs.map((doc) => ({
-  //         id: doc.id,
-  //         ...doc.data(),
-  //       }));
-  //       setResearchList(results);
-  //     } catch (error) {
-  //       console.error("Error fetching research:", error);
-  //     }
-  //     setLoading(false);
-  //   };
-  //   if (searchQuery) {
-  //     fetchResearch();
-  //   }
-  // }, [searchQuery]);
 
   return (
     <div style={{ padding: 20 }}>
@@ -91,28 +61,8 @@ const SearchResult = () => {
                 actions={[
                   <Link
                     key="list-loadmore-view"
-                    to={`/research?title=${encodeURIComponent(
-                      item.title
-                    )}&researcher=${encodeURIComponent(
-                      item.researcher
-                    )}&adviser=${encodeURIComponent(
-                      item.adviser
-                    )}&gradeSection=${encodeURIComponent(
-                      item.gradeSection
-                    )}&category=${encodeURIComponent(item.category)}`}
-                    onClick={() =>
-                      navigate(
-                        `/research?title=${encodeURIComponent(
-                          item.title
-                        )}&researcher=${encodeURIComponent(
-                          item.researcher
-                        )}&adviser=${encodeURIComponent(
-                          item.adviser
-                        )}&gradeSection=${encodeURIComponent(
-                          item.gradeSection
-                        )}&category=${encodeURIComponent(item.category)}`
-                      )
-                    }
+                    to={`/research?id=${item.id}`}
+                    onClick={() => navigate(`/research?id=${item.id}`)}
                   >
                     View
                   </Link>,
@@ -130,7 +80,7 @@ const SearchResult = () => {
                     description={
                       <div style={{ display: "flex", flexDirection: "column" }}>
                         <span>
-                          <strong>Researcher:</strong> {item.researcher}
+                          <strong>Researcher:</strong> {item.researchers}
                         </span>
                         <span>
                           <strong>Adviser:</strong> {item.adviser}
