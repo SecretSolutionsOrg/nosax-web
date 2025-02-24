@@ -3,7 +3,7 @@ import { useLocation, Link, useNavigate } from "react-router-dom";
 import { List, Skeleton, Avatar, Spin, Card } from "antd";
 import { FilePdfTwoTone } from "@ant-design/icons";
 import { db } from "../store/firebase-config";
-import { collection, getDocs } from "firebase/firestore"; // Removed unused `query`
+import { collection, getDocs, query, where } from "firebase/firestore"; // Removed unused `query`
 
 const SearchResult = () => {
   const location = useLocation();
@@ -19,7 +19,8 @@ const SearchResult = () => {
       setLoading(true);
       try {
         const researchRef = collection(db, "researches");
-        const snapshot = await getDocs(researchRef);
+        const q = query(researchRef, where("status", "==", "published"));
+        const snapshot = await getDocs(q);
 
         const researchData = snapshot.docs.map((doc) => ({
           id: doc.id,

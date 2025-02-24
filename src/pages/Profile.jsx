@@ -35,7 +35,11 @@ const Profile = () => {
 
     const fetchResearchData = async (uid) => {
       const researchRef = collection(db, "researches");
-      const q = query(researchRef, where("uploader", "==", uid));
+      const q = query(
+        researchRef,
+        where("uploader", "==", uid),
+        where("status", "==", "published")
+      );
       const querySnapshot = await getDocs(q);
 
       const researchData = querySnapshot.docs.map((doc) => ({

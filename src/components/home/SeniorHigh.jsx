@@ -29,7 +29,8 @@ const SeniorHigh = () => {
           "Grade 12 - Arts and Design",
           "Grade 12 - ICT",
           "Grade 12 - Sports Track",
-        ])
+        ]),
+        where("status", "==", "published")
       );
       const querySnapshot = await getDocs(q);
 

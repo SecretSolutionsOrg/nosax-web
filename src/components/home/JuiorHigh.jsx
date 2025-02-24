@@ -20,7 +20,8 @@ const JuniorHigh = () => {
           "Grade 9 - STE",
           "Grade 10 - STE",
           "Grade 10 - GENERAL",
-        ])
+        ]),
+        where("status", "==", "published")
       );
       const querySnapshot = await getDocs(q);
 

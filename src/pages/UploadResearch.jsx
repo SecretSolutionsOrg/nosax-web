@@ -93,6 +93,7 @@ const UploadResearch = () => {
         category: values.category,
         file: file.name,
         uploader: auth.currentUser.uid,
+        status: "unpublished",
         createdAt: new Date(),
         updatedAt: new Date(),
       };
