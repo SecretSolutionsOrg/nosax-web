@@ -21,7 +21,7 @@ const Container = () => {
   }, []);
 
   return (
-    <Layout style={{ minHeight: "100vh" }}>
+    <Layout style={{ minHeight: "100vh", backgroundColor: "#E3F2FD" }}>
       {/* Navigation Bar */}
       <NavHeader />
 
