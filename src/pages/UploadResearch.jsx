@@ -18,8 +18,10 @@ import {
   PlusOutlined,
   MinusCircleOutlined,
 } from "@ant-design/icons";
-import { addResearch } from "../store/research";
 import { auth } from "../store/firebase-config";
+import { db } from "../store/firebase-config";
+import { collection, addDoc } from "firebase/firestore";
+import { supabase } from "../store/superbaseClient";
 
 const { Option } = Select;
 
@@ -84,21 +86,29 @@ const UploadResearch = () => {
 
     setLoading(true);
 
+    const filename = `${Date.now()}-${file.name}`;
+
     try {
+      const { error } = await supabase.storage
+        .from("pdfs")
+        .upload(filename, file);
+
+      if (error) throw error;
+
       const researchData = {
         title: values.title,
         researchers: values.researchers.map((a) => a.researcher).join(", "),
         adviser: values.adviser,
         grade_section: values.gradeSection,
         category: values.category,
-        file: file.name,
+        file: filename,
         uploader: auth.currentUser.uid,
         status: "unpublished",
         createdAt: new Date(),
         updatedAt: new Date(),
       };
 
-      await addResearch(researchData);
+      await addDoc(collection(db, "researches"), researchData);
 
       openNotificationWithIcon("success", "Successful research upload");
       form.resetFields();

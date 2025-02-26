@@ -9,6 +9,7 @@ import {
   updateDoc,
   doc,
 } from "firebase/firestore";
+import { supabase } from "../../store/superbaseClient";
 
 const Admin = () => {
   const [researchRequests, setResearchRequests] = useState([]);
@@ -29,10 +30,23 @@ const Admin = () => {
         const q = query(researchRef, where("status", "==", "unpublished"));
         const snapshot = await getDocs(q);
 
-        const researchData = snapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        }));
+        const researchData = await Promise.all(
+          snapshot.docs.map(async (doc) => {
+            const data = { id: doc.id, ...doc.data() };
+
+            if (data.file) {
+              const { data: urlData } = supabase.storage
+                .from("pdfs")
+                .getPublicUrl(data.file);
+
+              data.pdfUrl = urlData?.publicUrl || null;
+            } else {
+              data.pdfUrl = null;
+            }
+
+            return data;
+          })
+        );
 
         setResearchRequests(researchData);
       } catch (error) {
@@ -96,7 +110,7 @@ const Admin = () => {
                     </Typography.Text>
                     <br />
                     <a
-                      href="/pdf/default.pdf"
+                      href={item.pdfUrl}
                       target="_blank"
                       rel="noopener noreferrer"
                     >

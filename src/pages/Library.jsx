@@ -35,7 +35,6 @@ const Library = () => {
       );
 
       setLibraryData(researchData.filter((item) => item !== null));
-      console.log(libraryData);
     };
 
     fetchLibrary();

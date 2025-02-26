@@ -5,6 +5,7 @@ import { doc, getDoc, setDoc, deleteDoc } from "firebase/firestore";
 import { db, auth } from "../store/firebase-config";
 import { HeartOutlined, HeartFilled } from "@ant-design/icons";
 import PDFViewer from "../components/PDFViewer";
+import { supabase } from "../store/superbaseClient";
 
 const Research = () => {
   const [api, contextHolder] = notification.useNotification();
@@ -31,7 +32,20 @@ const Research = () => {
       const researchSnap = await getDoc(researchRef);
 
       if (researchSnap.exists()) {
-        setResearch(researchSnap.data());
+        let researchData = researchSnap.data();
+
+        if (researchData.file) {
+          const { data: urlData } = supabase.storage
+            .from("pdfs")
+            .getPublicUrl(researchData.file);
+
+          researchData = {
+            ...researchData,
+            pdfUrl: urlData?.publicUrl || null,
+          };
+        }
+
+        setResearch(researchData);
       }
 
       if (currentUser) {
@@ -123,11 +137,7 @@ const Research = () => {
           ))}
         </Row>
 
-        <PDFViewer title={research.title} file="/pdf/default.pdf" />
-        {/* <PDFViewer
-        title={research.name}
-        file={research.file || "/pdf/default.pdf"}
-      /> */}
+        <PDFViewer title={research.title} file={research.pdfUrl} />
       </Card>
     </>
   );
