@@ -2,6 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { getAuth, signOut } from "firebase/auth";
 import { Typography } from "antd";
 import logo from "../../../assets/logo.png";
+import gnhs from "../../../assets/gnhs.png";
 
 const { Link } = Typography;
 
@@ -41,7 +42,7 @@ const AdminHeader = () => {
         </div>
       </div>
 
-      <img src={logo} alt="Logo" style={{ height: "40px" }} />
+      <img src={gnhs} alt="GNHS" style={{ height: "40px" }} />
 
       {/* Responsive Styles */}
       <style>

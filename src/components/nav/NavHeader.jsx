@@ -11,6 +11,7 @@ import { Menu, Drawer, Button, Input } from "antd";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import logo from "../../assets/logo.png";
+import gnhs from "../../assets/gnhs.png";
 import { auth } from "../../store/firebase-config";
 import { signOut } from "firebase/auth";
 
@@ -141,7 +142,7 @@ const NavHeader = () => {
       ) : (
         menuItems
       )}
-      <img src={logo} alt="Logo" style={{ height: "40px" }} />
+      <img src={gnhs} alt="GNHS" style={{ height: "40px" }} />
     </div>
   );
 };

@@ -46,7 +46,11 @@ const Login = () => {
   return (
     <>
       {contextHolder}
-      <Row style={{ minHeight: "100vh" }} align="middle" justify="center">
+      <Row
+        style={{ minHeight: "100vh", backgroundColor: "#E3F2FD" }}
+        align="middle"
+        justify="center"
+      >
         {/* Left Column - Logo */}
         <Col xs={24} md={10} style={{ textAlign: "center", padding: "20px" }}>
           <img

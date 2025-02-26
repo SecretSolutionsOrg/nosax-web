@@ -102,6 +102,7 @@ const Register = () => {
           alignItems: "center",
           justifyContent: "center",
           padding: "20px",
+          backgroundColor: "#E3F2FD",
         }}
       >
         <Row
